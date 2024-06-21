@@ -1,5 +1,5 @@
 {
-  "app": "node bin/serverless-url-shortner-app-using-aws-cdk.js",
+  "app": "node cdk/main.js",
   "watch": {
     "include": [
       "**"
