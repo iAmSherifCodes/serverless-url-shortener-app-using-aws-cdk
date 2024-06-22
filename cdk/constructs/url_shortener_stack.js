@@ -4,6 +4,10 @@ const {
   AttributeType,
   BillingMode,
 } = require("aws-cdk-lib/aws-dynamodb");
+const {
+    RestApi,
+    LambdaIntegration,
+  } = require("aws-cdk-lib/aws-apigateway");
 const { Function, Runtime } = require("aws-cdk-lib/aws-lambda");
 
 class UrlShortenerStack extends Stack {
@@ -42,6 +46,11 @@ class UrlShortenerStack extends Stack {
 
     table.grantReadData(redirectFunction);
 
+    const api = new RestApi(this, `${props.stageName}-UrlApi`, {
+        deployOptions: {
+          stageName: props.stageName,
+        },
+      });
     
   }
 }
