@@ -51,6 +51,9 @@ class UrlShortenerStack extends Stack {
           stageName: props.stageName,
         },
       });
+
+    const shortenUrlLambdaIntegration = new LambdaIntegration(shortenUrl);
+    const redirectFunctionLambdaIntegration = new LambdaIntegration(redirectFunction);
     
   }
 }
