@@ -4,7 +4,7 @@ const {
   AttributeType,
   BillingMode,
 } = require("aws-cdk-lib/aws-dynamodb");
-const { Function } = require("aws-cdk-lib/aws-lambda");
+const { Function, Runtime } = require("aws-cdk-lib/aws-lambda");
 
 class UrlShortenerStack extends Stack {
   constructor(id, scope, props) {
@@ -18,15 +18,30 @@ class UrlShortenerStack extends Stack {
       billingMode: BillingMode.PAY_PER_REQUEST,
     });
 
+    const table_name = table.tableName;
+
     const shortenUrl = new Function(this, "ShortenUrl", {
       runtime: Runtime.NODEJS_18_X,
       handler: "shorten_url.handler",
       code: Code.fromAsset("functions"),
       environment: {
-        table_name: table.tableName,
+        table_name,
       },
     });
 
     table.grantWriteData(shortenUrl);
+
+    const redirectFunction = new Function(this, "RedirectUrl", {
+      runtime: Runtime.NODEJS_18_X,
+      handler: "redirect.handler",
+      code: Code.fromAsset("functions"),
+      environment: {
+        table_name,
+      },
+    });
+
+    table.grantReadData(redirectFunction);
+
+    
   }
 }
