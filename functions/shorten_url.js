@@ -16,10 +16,8 @@ const generateShortUrl = () => {
     .slice(0, length);
 };
 
-console.log(generateShortUrl());
-
 // To handle ConditionalCheckFailedException error
-// check if the generated short url does not exist in the DB
+// check if the generated short url does not exist in the DB instead of handling retries manually
 
 module.exports.handler = async (event, context) => {
   const { long_url } = JSON.parse(event.body);
@@ -36,20 +34,15 @@ module.exports.handler = async (event, context) => {
 
   try {
     const data = await docClient.send(new PutCommand(params));
-    console.log('result : ' + JSON.stringify(data));
-  } catch (error) {
-    console.error("Error:", error);
-  }
-
-  try {
-    await docClient.send(new PutCommand(params));
+    console.log(generateShortUrl(), data);
     return {
       statusCode: 200,
       body: JSON.stringify({ short_url }),
     };
   } catch (error) {
-    if (error.code === "ConditionalCheckFailedException") {
-      return await exports.handler(event); // Retry if short URL already exists
+    // handling retry if shortUrl exists
+    if (error.name === "ConditionalCheckFailedException") {
+      return await exports.handler(event);
     } else {
       return {
         statusCode: 500,
