@@ -4,11 +4,8 @@ const {
   AttributeType,
   BillingMode,
 } = require("aws-cdk-lib/aws-dynamodb");
-const {
-    RestApi,
-    LambdaIntegration,
-  } = require("aws-cdk-lib/aws-apigateway");
-const { Function, Runtime } = require("aws-cdk-lib/aws-lambda");
+const { RestApi, LambdaIntegration } = require("aws-cdk-lib/aws-apigateway");
+const { Function, Runtime, Code } = require("aws-cdk-lib/aws-lambda");
 
 class UrlShortenerStack extends Stack {
   constructor(id, scope, props) {
@@ -47,13 +44,24 @@ class UrlShortenerStack extends Stack {
     table.grantReadData(redirectFunction);
 
     const api = new RestApi(this, `${props.stageName}-UrlApi`, {
-        deployOptions: {
-          stageName: props.stageName,
-        },
-      });
+      deployOptions: {
+        stageName: props.stageName,
+      },
+    });
 
     const shortenUrlLambdaIntegration = new LambdaIntegration(shortenUrl);
-    const redirectFunctionLambdaIntegration = new LambdaIntegration(redirectFunction);
-    
+    const redirectFunctionLambdaIntegration = new LambdaIntegration(
+      redirectFunction
+    );
+
+    api.root
+      .addResource("shorten")
+      .addMethod("POST", shortenUrlLambdaIntegration);
+
+    api.root
+      .addResource("{short_url}")
+      .addMethod("GET", redirectFunctionLambdaIntegration);
   }
 }
+
+module.exports = { UrlShortenerStack };
