@@ -11,6 +11,12 @@ class UrlShortenerStack extends Stack {
   constructor(id, scope, props) {
     super(id, scope, props);
 
+    const indexFuntion = new Function(this, "HandlerFunction", {
+      runtime: Runtime.NODEJS_18_X,
+      handler: "handler.hello",
+      code: Code.fromAsset("functions"),
+    });
+
     const table = new Table(this, "UrlShortenerTable", {
       partitionKey: {
         name: "short_url",
@@ -53,13 +59,16 @@ class UrlShortenerStack extends Stack {
     const redirectFunctionLambdaIntegration = new LambdaIntegration(
       redirectFunction
     );
+    const indexFuntionLambdaIntegration = new LambdaIntegration(indexFuntion);
+
+    api.root.addMethod("GET", indexFuntionLambdaIntegration);
 
     api.root
       .addResource("shorten")
       .addMethod("POST", shortenUrlLambdaIntegration);
-
+// .addResource("{short_url}")
     api.root
-      .addResource("{short_url}")
+      .addResource("redirect")
       .addMethod("GET", redirectFunctionLambdaIntegration);
   }
 }
