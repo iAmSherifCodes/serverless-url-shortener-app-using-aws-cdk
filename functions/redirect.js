@@ -6,7 +6,7 @@ const docClient = DynamoDBDocumentClient.from(client);
 const table_name = process.env.table_name;
 
 module.exports.handler = async (event, context) => {
-    const short_url = event.pathParameters.short_url
+  const short_url = event.queryStringParameters.short_url;
 
   const params = {
     TableName: table_name,
@@ -19,24 +19,24 @@ module.exports.handler = async (event, context) => {
     const data = await docClient.send(new GetCommand(params));
 
     if (!data.Item) {
-        return {
-            statusCode: 404,
-            body: JSON.stringify({ error: 'URL not found' })
-        };
+      return {
+        statusCode: 404,
+        body: JSON.stringify({ error: "URL not found" }),
+      };
     }
 
-    const long_url = data.Item.long_url;
     return {
-        statusCode: 302,
-        headers: {
-            Location: long_url
-        }
+      statusCode: 200,
+      long_url: data,
+      // statusCode: 302,
+      // headers: {
+      //   Location: long_url,
+      // },
     };
   } catch (error) {
-    console.error("Error:::", error);
     return {
-        statusCode: 500,
-        body: JSON.stringify({ error: 'Internal server error' })
+      statusCode: 500,
+      body: JSON.stringify({ error: "Internal server error" }),
     };
   }
 };
