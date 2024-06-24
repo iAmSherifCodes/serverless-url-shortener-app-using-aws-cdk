@@ -87,12 +87,24 @@ class UrlShortenerStack extends Stack {
       },
     });
 
-
+    const urlRequestValidator = new RequestValidator(
+      this,
+      "UrlRequestValidator",
+      {
+        restApi: api,
+        requestValidatorName: "UrlValidator",
+        validateRequestBody: true,
+        validateRequestParameters: false,
+      }
+    );
 
     api.root
       .addResource("shorten")
       .addMethod("POST", shortenUrlLambdaIntegration, {
-        re,
+        requestModels: {
+          "application/json": urlValidatorModel,
+        },
+        requestValidator: urlRequestValidator,
       });
 
     api.root
