@@ -34,7 +34,6 @@ module.exports.handler = async (event, context) => {
 
   try {
     const data = await docClient.send(new PutCommand(params));
-    console.log(generateShortUrl(), data);
     return {
       statusCode: 200,
       body: JSON.stringify({ short_url }),
