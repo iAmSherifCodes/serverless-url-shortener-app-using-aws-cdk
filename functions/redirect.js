@@ -6,12 +6,12 @@ const docClient = DynamoDBDocumentClient.from(client);
 const table_name = process.env.table_name;
 
 module.exports.handler = async (event, context) => {
-  const short_url = event.queryStringParameters.short_url;
+  const short_url = event.queryStringParameters?.short_url;
 
   const params = {
     TableName: table_name,
     Key: {
-      id: short_url,
+      short_url,
     },
   };
 
@@ -25,13 +25,16 @@ module.exports.handler = async (event, context) => {
       };
     }
 
+    const long_url = data.Item.long_url;
+    if (long_url.startsWith("http://") || long_url.startsWith("www.")) {
+      long_url = `https://${long_url}`;
+    }
+
     return {
-      statusCode: 200,
-      long_url: data,
-      // statusCode: 302,
-      // headers: {
-      //   Location: long_url,
-      // },
+      statusCode: 302,
+      headers: {
+        Location: long_url,
+      },
     };
   } catch (error) {
     return {
