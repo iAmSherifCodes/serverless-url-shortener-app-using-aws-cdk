@@ -9,6 +9,8 @@ const {
   LambdaIntegration,
   Model,
   RequestValidator,
+  JsonSchemaVersion,
+  JsonSchemaType,
 } = require("aws-cdk-lib/aws-apigateway");
 const { Function, Runtime, Code } = require("aws-cdk-lib/aws-lambda");
 
@@ -74,12 +76,12 @@ class UrlShortenerStack extends Stack {
       description: "Validate Long Url",
       modelName: "URLValidatorModel",
       schema: {
-        schema: api.JsonSchemaVersion.DRAFT4,
+        schema: JsonSchemaVersion.DRAFT4,
         title: "LongURlValidator",
-        type: apigateway.JsonSchemaType.OBJECT,
+        type: JsonSchemaType.OBJECT,
         properties: {
           long_url: {
-            type: apigateway.JsonSchemaType.STRING,
+            type: JsonSchemaType.STRING,
             pattern: "^(http://|https://|www\\.).*",
           },
         },
@@ -109,7 +111,7 @@ class UrlShortenerStack extends Stack {
 
     api.root
       .addResource("redirect")
-      .addMethod("POST", redirectFunctionLambdaIntegration, {
+      .addMethod("GET", redirectFunctionLambdaIntegration, {
         requestParameters: {
           "method.request.querystring.short_url": true,
         },
