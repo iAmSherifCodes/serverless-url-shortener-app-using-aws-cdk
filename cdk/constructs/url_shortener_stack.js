@@ -4,7 +4,12 @@ const {
   AttributeType,
   BillingMode,
 } = require("aws-cdk-lib/aws-dynamodb");
-const { RestApi, LambdaIntegration } = require("aws-cdk-lib/aws-apigateway");
+const {
+  RestApi,
+  LambdaIntegration,
+  Model,
+  RequestValidator,
+} = require("aws-cdk-lib/aws-apigateway");
 const { Function, Runtime, Code } = require("aws-cdk-lib/aws-lambda");
 
 class UrlShortenerStack extends Stack {
@@ -63,13 +68,45 @@ class UrlShortenerStack extends Stack {
 
     api.root.addMethod("GET", indexFuntionLambdaIntegration);
 
+    const urlValidatorModel = new Model(this, "UrlValidator", {
+      restApi: api,
+      contentType: "application/json",
+      description: "Validate Long Url",
+      modelName: "URLValidatorModel",
+      schema: {
+        schema: api.JsonSchemaVersion.DRAFT4,
+        title: "LongURlValidator",
+        type: apigateway.JsonSchemaType.OBJECT,
+        properties: {
+          long_url: {
+            type: apigateway.JsonSchemaType.STRING,
+            pattern: "^(http://|https://|www\\.).*",
+          },
+        },
+        required: ["long_url"],
+      },
+    });
+
+
+
     api.root
       .addResource("shorten")
-      .addMethod("POST", shortenUrlLambdaIntegration);
-// .addResource("{short_url}")
+      .addMethod("POST", shortenUrlLambdaIntegration, {
+        re,
+      });
+
     api.root
       .addResource("redirect")
-      .addMethod("GET", redirectFunctionLambdaIntegration);
+      .addMethod("POST", redirectFunctionLambdaIntegration, {
+        requestParameters: {
+          "method.request.querystring.short_url": true,
+        },
+        requestValidatorOptions: {
+          requestValidatorName: "querystring-validator",
+          validateRequestParameters: true,
+          validateRequestBody: false,
+        },
+      });
   }
 }
 
