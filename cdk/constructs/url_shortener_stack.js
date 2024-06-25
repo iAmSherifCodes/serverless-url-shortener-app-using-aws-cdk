@@ -1,4 +1,4 @@
-const { Stack } = require("aws-cdk-lib");
+const { Stack, Fn } = require("aws-cdk-lib");
 const {
   Table,
   AttributeType,
@@ -34,12 +34,21 @@ class UrlShortenerStack extends Stack {
 
     const table_name = table.tableName;
 
+    const api = new RestApi(this, `${props.stageName}-UrlApi`, {
+      deployOptions: {
+        stageName: props.stageName,
+      },
+    });
+
+    const apiLogicalId = this.getLogicalId(api.node.defaultChild);
+
     const shortenUrl = new Function(this, "ShortenUrl", {
       runtime: Runtime.NODEJS_18_X,
       handler: "shorten_url.handler",
       code: Code.fromAsset("functions"),
       environment: {
         table_name,
+
       },
     });
 
@@ -55,12 +64,6 @@ class UrlShortenerStack extends Stack {
     });
 
     table.grantReadData(redirectFunction);
-
-    const api = new RestApi(this, `${props.stageName}-UrlApi`, {
-      deployOptions: {
-        stageName: props.stageName,
-      },
-    });
 
     const shortenUrlLambdaIntegration = new LambdaIntegration(shortenUrl);
     const redirectFunctionLambdaIntegration = new LambdaIntegration(
@@ -121,6 +124,8 @@ class UrlShortenerStack extends Stack {
           validateRequestBody: false,
         },
       });
+
+    this.api = api;
   }
 }
 
