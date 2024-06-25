@@ -5,6 +5,7 @@ const crypto = require("crypto");
 const client = new DynamoDBClient({});
 const docClient = DynamoDBDocumentClient.from(client);
 const table_name = process.env.table_name;
+const base_url = process.env.base_url;
 
 const generateShortUrl = () => {
   const length = 7;
@@ -33,10 +34,10 @@ module.exports.handler = async (event, context) => {
   };
 
   try {
-    const data = await docClient.send(new PutCommand(params));
+    await docClient.send(new PutCommand(params));
     return {
       statusCode: 200,
-      body: JSON.stringify({ short_url }),
+      body: JSON.stringify({ url: base_url + short_url }),
     };
   } catch (error) {
     // handling retry if shortUrl exists
