@@ -1,6 +1,4 @@
-# Welcome to your CDK JavaScript project
-
-This is a blank project for CDK development with JavaScript.
+# Serverless Url Shortener Application built with AWS CDK
 
 The `cdk.json` file tells the CDK Toolkit how to execute your app. The build step is not required when using JavaScript.
 
