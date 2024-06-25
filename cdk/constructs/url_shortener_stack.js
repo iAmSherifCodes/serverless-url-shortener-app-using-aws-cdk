@@ -48,7 +48,9 @@ class UrlShortenerStack extends Stack {
       code: Code.fromAsset("functions"),
       environment: {
         table_name,
-
+        base_url: Fn.sub(
+          `https://\${${apiLogicalId}}.execute-api.\${AWS::Region}.amazonaws.com/${props.stageName}/redirect?short_url=`
+        )
       },
     });
 
