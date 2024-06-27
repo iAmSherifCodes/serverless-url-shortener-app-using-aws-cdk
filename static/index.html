@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>URL Shortener</title>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+        background-color: #f0f0f0;
+        margin: 0;
+      }
+      .container {
+        background: #fff;
+        padding: 20px;
+        border-radius: 10px;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        text-align: center;
+      }
+      .container input,
+      .container button {
+        width: 80%;
+        padding: 10px;
+        margin: 10px 0;
+        border-radius: 5px;
+        border: 1px solid #ccc;
+      }
+      .container button {
+        background-color: #4caf50;
+        color: white;
+        border: none;
+      }
+      .container button:hover {
+        background-color: #45a049;
+      }
+      .result {
+        display: none;
+        margin-top: 20px;
+      }
+      .result input {
+        width: 70%;
+      }
+      .result button {
+        width: 20%;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <h1>URL Shortener</h1>
+      <input type="text" id="long-url" placeholder="Enter long URL" />
+      <button onclick="shortenUrl()">Shorten URL</button>
+      <div class="result" id="result">
+        <p>Yay! Copy your shortened URL below</p>
+        <input type="text" id="short-url" readonly />
+        <button onclick="copyUrl()">Copy</button>
+      </div>
+    </div>
+
+    <script>
+      const SHORTEN_URL = "{{ shorten_url}}";
+
+      async function shortenUrl() {
+        // const long_url = $("#long-url")[0].value.toLowerCase();
+        const long_url = document
+          .getElementById("long-url")
+          .value.toLowerCase();
+        // // const response = await fetch(SHORTEN_URL, {
+        //   method: "POST",
+        //   headers: {
+        //     "Content-Type": "application/json",
+        //   },
+        //   body: JSON.stringify({ long_url }),
+        // });
+
+        var xhr = new XMLHttpRequest();
+        xhr.open("POST", SHORTEN_URL);
+        xhr.responseType = "json";
+        xhr.setRequestHeader("Content-Type", "application/json; charset=utf-8");
+        xhr.send(JSON.stringify({ long_url }));
+
+        xhr.onload = function () {
+          if (xhr.status === 200) {
+            var data = xhr.response.url;
+            // const shortUrl = data.url;
+            console.log(SHORTEN_URL);
+            document.getElementById("short-url").value = data;
+            document.getElementById("result").style.display = "block";
+          } else {
+            alert("Failed to shorten URL. Please try again.");
+          }
+        };
+      }
+
+      function copyUrl() {
+        const shortUrl = document.getElementById("short-url");
+        shortUrl.select();
+        document.execCommand("copy");
+        alert("Shortened URL copied to clipboard");
+      }
+    </script>
+  </body>
+</html>
