@@ -30,12 +30,12 @@
         border: 1px solid #ccc;
       }
       .container button {
-        background-color: #4caf50;
+        background-color: #100242;
         color: white;
         border: none;
       }
       .container button:hover {
-        background-color: #45a049;
+        background-color: #100242;
       }
       .result {
         display: none;
@@ -62,20 +62,12 @@
     </div>
 
     <script>
-      const SHORTEN_URL = "{{ shorten_url}}";
+      const SHORTEN_URL = "{{& shorten_url}}";
 
       async function shortenUrl() {
-        // const long_url = $("#long-url")[0].value.toLowerCase();
         const long_url = document
           .getElementById("long-url")
           .value.toLowerCase();
-        // // const response = await fetch(SHORTEN_URL, {
-        //   method: "POST",
-        //   headers: {
-        //     "Content-Type": "application/json",
-        //   },
-        //   body: JSON.stringify({ long_url }),
-        // });
 
         var xhr = new XMLHttpRequest();
         xhr.open("POST", SHORTEN_URL);
@@ -86,7 +78,6 @@
         xhr.onload = function () {
           if (xhr.status === 200) {
             var data = xhr.response.url;
-            // const shortUrl = data.url;
             console.log(SHORTEN_URL);
             document.getElementById("short-url").value = data;
             document.getElementById("result").style.display = "block";
