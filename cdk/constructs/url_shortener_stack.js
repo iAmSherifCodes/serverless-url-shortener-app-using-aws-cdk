@@ -1,4 +1,4 @@
-const { Stack, Fn } = require("aws-cdk-lib");
+const { Stack, Fn} = require("aws-cdk-lib");
 const {
   Table,
   AttributeType,
@@ -13,16 +13,11 @@ const {
   JsonSchemaType,
 } = require("aws-cdk-lib/aws-apigateway");
 const { Function, Runtime, Code } = require("aws-cdk-lib/aws-lambda");
+const { NodejsFunction } = require("aws-cdk-lib/aws-lambda-nodejs");
 
 class UrlShortenerStack extends Stack {
   constructor(id, scope, props) {
     super(id, scope, props);
-
-    const indexFuntion = new Function(this, "HandlerFunction", {
-      runtime: Runtime.NODEJS_18_X,
-      handler: "handler.hello",
-      code: Code.fromAsset("functions"),
-    });
 
     const table = new Table(this, "UrlShortenerTable", {
       partitionKey: {
@@ -41,6 +36,29 @@ class UrlShortenerStack extends Stack {
     });
 
     const apiLogicalId = this.getLogicalId(api.node.defaultChild);
+
+    const indexFuntion = new NodejsFunction(this, "HandlerFunction", {
+      runtime: Runtime.NODEJS_18_X,
+      handler: "hello",
+      entry: "functions/handler.js",
+      bundling: {
+        commandHooks: {
+          afterBundling(inputDir, outputDir) {
+            return [
+              `mkdir ${outputDir}/static`,
+              `cp ${inputDir}/static/index.html ${outputDir}/static/index.html`,
+            ];
+          },
+          beforeBundling() {},
+          beforeInstall() {},
+        },
+      },
+      environment:{
+        shortenUrl: Fn.sub(
+          `https://\${${apiLogicalId}}.execute-api.\${AWS::Region}.amazonaws.com/${props.stageName}/shorten`
+        )
+      }
+    });
 
     const shortenUrl = new Function(this, "ShortenUrl", {
       runtime: Runtime.NODEJS_18_X,
@@ -126,9 +144,7 @@ class UrlShortenerStack extends Stack {
           validateRequestBody: false,
         },
       });
-
-    this.api = api;
-  }
+}
 }
 
 module.exports = { UrlShortenerStack };
