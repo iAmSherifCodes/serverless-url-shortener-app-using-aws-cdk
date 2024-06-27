@@ -51,11 +51,11 @@
   </head>
   <body>
     <div class="container">
-      <h1>URL Shortener</h1>
+      <h1>✨ URL Shortener ✨</h1>
       <input type="text" id="long-url" placeholder="Enter long URL" />
       <button onclick="shortenUrl()">Shorten URL</button>
       <div class="result" id="result">
-        <p>Yay! Copy your shortened URL below</p>
+        <p>🎉 Yay! Copy your shortened URL below</p>
         <input type="text" id="short-url" readonly />
         <button onclick="copyUrl()">Copy</button>
       </div>
@@ -64,10 +64,16 @@
     <script>
       const SHORTEN_URL = "{{& shorten_url}}";
 
+      function validateShortUrl(long_url){
+        return long_url.startsWith("http://") || long_url.startsWith("www.") || long_url.startsWith("https://") ? long_url : alert("Invalid url: Url must be start with 'www / http / https'");
+      }
+
       async function shortenUrl() {
         const long_url = document
           .getElementById("long-url")
           .value.toLowerCase();
+
+        validateShortUrl(long_url)
 
         var xhr = new XMLHttpRequest();
         xhr.open("POST", SHORTEN_URL);
