@@ -9,9 +9,10 @@ module.exports.hello = async (event, context) => {
   });
   const response = {
     statusCode: 200,
-    body: JSON.stringify({
-      message: 'Hi Dear!'
-  })
+    headers: {
+      "Content-Type": "text/html; charset=UTF-8",
+    },
+    body: html,
   };
 
   return response;
