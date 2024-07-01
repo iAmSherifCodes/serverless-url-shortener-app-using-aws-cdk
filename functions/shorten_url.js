@@ -34,7 +34,10 @@ module.exports.handler = async (event, context) => {
   };
 
   try {
+    console.log("here")
     await docClient.send(new PutCommand(params));
+    console.log("got here")
+
     return {
       statusCode: 200,
       body: JSON.stringify({ url: base_url + short_url }),
@@ -46,7 +49,7 @@ module.exports.handler = async (event, context) => {
     } else {
       return {
         statusCode: 500,
-        body: JSON.stringify({ error: "Internal server error" }),
+        body: JSON.stringify({ error: "Error putting to the DB" }),
       };
     }
   }
