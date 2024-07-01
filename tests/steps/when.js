@@ -1,20 +1,25 @@
-const APP_ROOT = '../../'
-const _ = require('lodash')
+const APP_ROOT = "../../";
+const _ = require("lodash");
 
 const viaHandler = async (event, functionName) => {
-  const handler = require(`${APP_ROOT}/functions/${functionName}`).handler
+  const handler = require(`${APP_ROOT}/functions/${functionName}`).handler;
 
-  const context = {}
-  const response = await handler(event, context)
-  const contentType = _.get(response, 'headers.Content-Type', 'application/json');
-  if (response.body && contentType === 'application/json') {
+  const context = {};
+  const response = await handler(event, context);
+  const contentType = _.get(
+    response,
+    "headers.Content-Type",
+    "application/json"
+  );
+  if (response.body && contentType === "application/json") {
     response.body = JSON.parse(response.body);
   }
-  return response
-}
+  return response;
+};
 
-const we_invoke_get_index = () => viaHandler({}, 'handler')
+const we_invoke_handler = () => viaHandler({}, "handler");
+
 
 module.exports = {
-  we_invoke_get_index
-}
+  we_invoke_get_index,
+};
