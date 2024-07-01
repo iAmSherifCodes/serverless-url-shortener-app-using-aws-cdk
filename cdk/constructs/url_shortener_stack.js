@@ -39,7 +39,7 @@ class UrlShortenerStack extends Stack {
 
     const indexFuntion = new NodejsFunction(this, "HandlerFunction", {
       runtime: Runtime.NODEJS_18_X,
-      handler: "hello",
+      handler: "handler",
       entry: "functions/handler.js",
       bundling: {
         commandHooks: {
