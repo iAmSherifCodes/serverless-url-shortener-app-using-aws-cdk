@@ -34,9 +34,7 @@ module.exports.handler = async (event, context) => {
   };
 
   try {
-    console.log("here")
     await docClient.send(new PutCommand(params));
-    console.log("got here")
 
     return {
       statusCode: 200,
