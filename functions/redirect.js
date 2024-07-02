@@ -28,8 +28,9 @@ const formatLongUrl = (long_url) => {
 };
 
 module.exports.handler = async (event, context) => {
+  
   const short_url = event.queryStringParameters?.short_url;
-
+console.log(event.queryStringParameters?.short_url, "from the handler")
   if (!short_url) {
     return {
       statusCode: 400,
