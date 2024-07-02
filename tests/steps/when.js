@@ -25,8 +25,16 @@ const we_invoke_shorten_url = (long_url) => {
 
   return viaHandler(event, "shorten_url");
 };
+const we_invoke_redirect = (short_url) => {
+  let event = {
+    queryStringParameters: { short_url },
+  };
+
+  return viaHandler(event, "redirect");
+};
 
 module.exports = {
-  we_invoke_get_index,
+  we_invoke_handler,
   we_invoke_shorten_url,
+  we_invoke_redirect,
 };
