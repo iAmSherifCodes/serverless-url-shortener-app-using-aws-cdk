@@ -11,6 +11,7 @@ const {
   RequestValidator,
   JsonSchemaVersion,
   JsonSchemaType,
+  AuthorizationType,
 } = require("aws-cdk-lib/aws-apigateway");
 const { Function, Runtime, Code } = require("aws-cdk-lib/aws-lambda");
 const { NodejsFunction } = require("aws-cdk-lib/aws-lambda-nodejs");
@@ -126,11 +127,13 @@ class UrlShortenerStack extends Stack {
     api.root
       .addResource("shorten")
       .addMethod("POST", shortenUrlLambdaIntegration, {
+        authorizationType: AuthorizationType.COGNITO,
         requestModels: {
           "application/json": urlValidatorModel,
         },
         requestValidator: urlRequestValidator,
-      });
+      },
+    );
 
     api.root
       .addResource("redirect")
