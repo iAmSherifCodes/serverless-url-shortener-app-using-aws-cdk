@@ -29,7 +29,7 @@ class CognitoStack extends Stack {
       },
     });
 
-    const userPoolClient = new UserPoolClient(this, "WebUserPoolClient", {
+    const webUserPoolClient = new UserPoolClient(this, "WebUserPoolClient", {
       userPool,
       generateSecret: false,
       preventUserExistenceErrors: true,
@@ -39,8 +39,8 @@ class CognitoStack extends Stack {
       },
     });
 
-    this.userPoolId = userPool.userPoolId;
-    this.userPoolClientId = userPoolClient.userPoolClientId;
+    this.userPool = userPool;
+    this.webUserPoolClient = webUserPoolClient;
   }
 }
 
