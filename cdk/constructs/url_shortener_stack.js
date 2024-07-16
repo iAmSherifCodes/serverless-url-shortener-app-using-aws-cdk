@@ -139,6 +139,9 @@ class UrlShortenerStack extends Stack {
         requestModels: {
           "application/json": urlValidatorModel,
         },
+        authorizer: {
+          authorizerId: cognitoAuthorizer.ref
+        },
         requestValidator: urlRequestValidator,
       },
     );
