@@ -124,6 +124,14 @@ class UrlShortenerStack extends Stack {
       }
     );
 
+    const cognitoAuthorizer = new CfnAuthorizer(this, 'CognitoAuthorizer', {
+      name: 'CognitoAuthorizer',
+      type: 'COGNITO_USER_POOLS',
+      identitySource: 'method.request.header.Authorization',
+      providerArns: [props.userPool.userPoolArn],
+      restApiId: api.restApiId,
+    })
+
     api.root
       .addResource("shorten")
       .addMethod("POST", shortenUrlLambdaIntegration, {
