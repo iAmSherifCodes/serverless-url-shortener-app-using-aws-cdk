@@ -1,4 +1,5 @@
 const { UserPool, UserPoolClient } = require("aws-cdk-lib/aws-cognito");
+const { Stack } = require("aws-cdk-lib");
 
 class CognitoStack extends Stack {
   /**
