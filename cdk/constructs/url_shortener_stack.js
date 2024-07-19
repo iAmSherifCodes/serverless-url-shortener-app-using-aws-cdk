@@ -12,6 +12,7 @@ const {
   JsonSchemaVersion,
   JsonSchemaType,
   AuthorizationType,
+  CfnAuthorizer,
 } = require("aws-cdk-lib/aws-apigateway");
 const { Function, Runtime, Code } = require("aws-cdk-lib/aws-lambda");
 const { NodejsFunction } = require("aws-cdk-lib/aws-lambda-nodejs");
