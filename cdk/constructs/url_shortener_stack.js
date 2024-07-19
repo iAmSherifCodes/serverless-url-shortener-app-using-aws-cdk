@@ -58,7 +58,9 @@ class UrlShortenerStack extends Stack {
       environment:{
         shortenUrl: Fn.sub(
           `https://\${${apiLogicalId}}.execute-api.\${AWS::Region}.amazonaws.com/${props.stageName}/shorten`
-        )
+        ),
+        cognito_user_pool_id: props.userPool.userPoolId,
+        cognito_client_id: props.webUserPool.userPoolClientId
       }
     });
 
