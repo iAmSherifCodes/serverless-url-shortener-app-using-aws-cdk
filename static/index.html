@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<!-- <!DOCTYPE html>
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
@@ -101,12 +101,6 @@
     </style>
   </head>
   <body>
-    <div class="auth-links">
-      <a id="sign-in" onclick="showModal('signIn')">Sign In</a>
-      <a id="register" onclick="showModal('register')">Sign Up</a>
-      <a id="sign-out" onclick="signOut()" style="display: none;">Sign Out</a>
-    </div>
-
     <div class="container">
       <h1>✨ URL Shortener ✨</h1>
       <input type="text" id="long-url" placeholder="Enter long URL" />
@@ -116,14 +110,20 @@
         <input type="text" id="short-url" readonly />
         <button onclick="copyUrl()">Copy</button>
       </div>
+
+      
+      <div class="auth-links">
+        <a id="sign-in" onclick="showModal('signIn')">Sign In</a>
+        <a id="register" onclick="showModal('register')">Sign Up</a>
+        <a id="sign-out" onclick="signOut()" style="display: none;">Sign Out</a>
+      </div>
     </div>
 
     <script>
-      const AWS_REGION = '{{awsRegion}}';
-      const COGNITO_USER_POOL_ID = '{{cognitoUserPoolId}}';
-      const CLIENT_ID = '{{cognitoClientId}}';
+      const AWS_REGION = "{{awsRegion}}";
+      const COGNITO_USER_POOL_ID = "{{cognitoUserPoolId}}";
+      const CLIENT_ID = "{{cognitoClientId}}";
       const SHORTEN_URL = "{{& shorten_url}}";
-
 
       var regDialog, regForm;
       var verifyDialog;
@@ -132,16 +132,16 @@
       var userPool, cognitoUser;
       var idToken;
 
-      function toggleSignOut (enable) {
-        enable === true ? $('#sign-out').show() : $('#sign-out').hide();
+      function toggleSignOut(enable) {
+        enable === true ? $("#sign-out").show() : $("#sign-out").hide();
       }
 
-      function toggleSignIn (enable) {
-        enable === true ? $('#sign-in').show() : $('#sign-in').hide();
+      function toggleSignIn(enable) {
+        enable === true ? $("#sign-in").show() : $("#sign-in").hide();
       }
 
-      function toggleRegister (enable) {
-        enable === true ? $('#register').show() : $('#register').hide();
+      function toggleRegister(enable) {
+        enable === true ? $("#register").show() : $("#register").hide();
       }
 
       function init() {
@@ -149,22 +149,23 @@
         AWSCognito.config.region = AWS_REGION;
 
         var data = {
-          UserPoolId : COGNITO_USER_POOL_ID,
-          ClientId : CLIENT_ID
+          UserPoolId: COGNITO_USER_POOL_ID,
+          ClientId: CLIENT_ID,
         };
-        userPool = new AWSCognito.CognitoIdentityServiceProvider.CognitoUserPool(data);
+        userPool =
+          new AWSCognito.CognitoIdentityServiceProvider.CognitoUserPool(data);
         cognitoUser = userPool.getCurrentUser();
 
         if (cognitoUser != null) {
-          cognitoUser.getSession(function(err, session) {
+          cognitoUser.getSession(function (err, session) {
             if (err) {
-                alert(err);
-                return;
+              alert(err);
+              return;
             }
 
             idToken = session.idToken.jwtToken;
-            console.log('idToken: ' + idToken);
-            console.log('session validity: ' + session.isValid());
+            console.log("idToken: " + idToken);
+            console.log("session validity: " + session.isValid());
           });
 
           toggleSignOut(true);
@@ -186,41 +187,54 @@
 
         var attributeList = [
           new AWSCognito.CognitoIdentityServiceProvider.CognitoUserAttribute({
-            Name : 'email', Value : email
+            Name: "email",
+            Value: email,
           }),
           new AWSCognito.CognitoIdentityServiceProvider.CognitoUserAttribute({
-            Name : 'given_name', Value : firstName
+            Name: "given_name",
+            Value: firstName,
           }),
           new AWSCognito.CognitoIdentityServiceProvider.CognitoUserAttribute({
-            Name : 'family_name', Value : lastName
+            Name: "family_name",
+            Value: lastName,
           }),
         ];
 
-        userPool.signUp(username, password, attributeList, null, function(err, result){
-          if (err) {
-            alert(err);
-            return;
-          }
-          cognitoUser = result.user;
-          console.log('user name is ' + cognitoUser.getUsername());
+        userPool.signUp(
+          username,
+          password,
+          attributeList,
+          null,
+          function (err, result) {
+            if (err) {
+              alert(err);
+              return;
+            }
+            cognitoUser = result.user;
+            console.log("user name is " + cognitoUser.getUsername());
 
-          regDialog.dialog("close");
-          verifyDialog.dialog("open");
-        });
+            regDialog.dialog("close");
+            verifyDialog.dialog("open");
+          }
+        );
       }
 
       function confirmUser() {
         var verificationCode = $("#verification-code")[0].value;
-        cognitoUser.confirmRegistration(verificationCode, true, function(err, result) {
-          if (err) {
-            alert(err);
-            return;
-          }
-          console.log('verification call result: ' + result);
+        cognitoUser.confirmRegistration(
+          verificationCode,
+          true,
+          function (err, result) {
+            if (err) {
+              alert(err);
+              return;
+            }
+            console.log("verification call result: " + result);
 
-          verifyDialog.dialog("close");
-          regCompleteDialog.dialog("open");
-        });
+            verifyDialog.dialog("close");
+            regCompleteDialog.dialog("open");
+          }
+        );
       }
 
       function authenticateUser() {
@@ -228,22 +242,28 @@
         var password = $("#sign-in-password")[0].value;
 
         var authenticationData = {
-          Username : username,
-          Password : password,
+          Username: username,
+          Password: password,
         };
-        var authenticationDetails = new AWSCognito.CognitoIdentityServiceProvider.AuthenticationDetails(authenticationData);
+        var authenticationDetails =
+          new AWSCognito.CognitoIdentityServiceProvider.AuthenticationDetails(
+            authenticationData
+          );
         var userData = {
-          Username : username,
-          Pool : userPool
+          Username: username,
+          Pool: userPool,
         };
-        var cognitoUser = new AWSCognito.CognitoIdentityServiceProvider.CognitoUser(userData);
+        var cognitoUser =
+          new AWSCognito.CognitoIdentityServiceProvider.CognitoUser(userData);
 
         cognitoUser.authenticateUser(authenticationDetails, {
           onSuccess: function (result) {
-            console.log('access token : ' + result.getAccessToken().getJwtToken());
+            console.log(
+              "access token : " + result.getAccessToken().getJwtToken()
+            );
             /*Use the idToken for Logins Map when Federating User Pools with Cognito Identity or when passing through an Authorization Header to an API Gateway Authorizer*/
             idToken = result.idToken.jwtToken;
-            console.log('idToken : ' + idToken);
+            console.log("idToken : " + idToken);
 
             signInDialog.dialog("close");
             toggleRegister(false);
@@ -251,9 +271,9 @@
             toggleSignOut(true);
           },
 
-          onFailure: function(err) {
+          onFailure: function (err) {
             alert(err);
-          }
+          },
         });
       }
 
@@ -266,8 +286,12 @@
         }
       }
 
-      function validateShortUrl(long_url){
-        return long_url.startsWith("http://") || long_url.startsWith("www.") || long_url.startsWith("https://") ? long_url : alert("Invalid url: Url must be start with 'www / http / https'");
+      function validateShortUrl(long_url) {
+        return long_url.startsWith("http://") ||
+          long_url.startsWith("www.") ||
+          long_url.startsWith("https://")
+          ? long_url
+          : alert("Invalid url: Url must be start with 'www / http / https'");
       }
 
       async function shortenUrl() {
@@ -275,7 +299,7 @@
           .getElementById("long-url")
           .value.toLowerCase();
 
-        validateShortUrl(long_url)
+        validateShortUrl(long_url);
 
         var xhr = new XMLHttpRequest();
         xhr.open("POST", SHORTEN_URL);
@@ -291,6 +315,361 @@
             document.getElementById("short-url").value = data;
             document.getElementById("result").style.display = "block";
           } else {
+            alert(xhr.response);
+          }
+        };
+      }
+
+      function copyUrl() {
+        const shortUrl = document.getElementById("short-url");
+        shortUrl.select();
+        document.execCommand("copy");
+        alert("Shortened URL copied to clipboard");
+      }
+
+      $(document).ready(function () {
+        regDialog = $("#reg-dialog-form").dialog({
+          autoOpen: false,
+          modal: true,
+          buttons: {
+            "Create an account": addUser,
+            Cancel: function () {
+              regDialog.dialog("close");
+            },
+          },
+          close: function () {
+            regForm[0].reset();
+          },
+        });
+
+        regForm = regDialog.find("form").on("submit", function (event) {
+          event.preventDefault();
+          addUser();
+        });
+
+        $("#register").on("click", function () {
+          regDialog.dialog("open");
+        });
+
+        verifyDialog = $("#verify-dialog-form").dialog({
+          autoOpen: false,
+          modal: true,
+          buttons: {
+            "Confirm registration": confirmUser,
+            Cancel: function () {
+              verifyDialog.dialog("close");
+            },
+          },
+          close: function () {
+            $(this).dialog("close");
+          },
+        });
+
+        regCompleteDialog = $("#registered-message").dialog({
+          autoOpen: false,
+          modal: true,
+          buttons: {
+            Ok: function () {
+              $(this).dialog("close");
+            },
+          },
+        });
+
+        signInDialog = $("#sign-in-form").dialog({
+          autoOpen: false,
+          modal: true,
+          buttons: {
+            "Sign in": authenticateUser,
+            Cancel: function () {
+              signInDialog.dialog("close");
+            },
+          },
+          close: function () {
+            $(this).dialog("close");
+          },
+        });
+
+        $("#sign-in").on("click", function () {
+          signInDialog.dialog("open");
+        });
+
+        $("#sign-out").on("click", function () {
+          signOut();
+        });
+
+        init();
+      });
+    </script>
+  </body>
+</html> -->
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>URL Shortener</title>
+    <script src="https://sdk.amazonaws.com/js/aws-sdk-2.149.0.min.js"></script>
+    <script src="https://d2qt42rcwzspd6.cloudfront.net/manning/aws-cognito-sdk.min.js"></script>
+    <script src="https://d2qt42rcwzspd6.cloudfront.net/manning/amazon-cognito-identity.min.js"></script>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+        background-color: #f0f0f0;
+        margin: 0;
+      }
+      .container {
+        background: #fff;
+        padding: 20px;
+        border-radius: 10px;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        text-align: center;
+        width: 300px;
+      }
+      .container input,
+      .container button {
+        width: 80%;
+        padding: 10px;
+        margin: 10px 0;
+        border-radius: 5px;
+        border: 1px solid #ccc;
+      }
+      .container button {
+        background-color: #100242;
+        color: white;
+        border: none;
+      }
+      .container button:hover {
+        background-color: #200464;
+      }
+      .result {
+        display: none;
+        margin-top: 20px;
+      }
+      .result input {
+        width: 70%;
+      }
+      .result button {
+        width: 20%;
+      }
+      .auth-buttons {
+        margin-top: 20px;
+      }
+      .auth-buttons a {
+        margin-right: 10px;
+        cursor: pointer;
+        color: #100242;
+        text-decoration: none;
+      }
+      .auth-buttons a:hover {
+        text-decoration: underline;
+      }
+      .modal {
+        display: none;
+        position: fixed;
+        z-index: 1;
+        left: 0;
+        top: 0;
+        width: 100%;
+        height: 100%;
+        overflow: auto;
+        background-color: rgb(0, 0, 0);
+        background-color: rgba(0, 0, 0, 0.4);
+      }
+      .modal-content {
+        background-color: #fefefe;
+        margin: 15% auto;
+        padding: 20px;
+        border: 1px solid #888;
+        width: 80%;
+        max-width: 400px;
+        border-radius: 10px;
+      }
+      .close {
+        color: #aaa;
+        float: right;
+        font-size: 28px;
+        font-weight: bold;
+      }
+      .close:hover,
+      .close:focus {
+        color: black;
+        text-decoration: none;
+        cursor: pointer;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <h1>✨ URL Shortener ✨</h1>
+      <input type="text" id="long-url" placeholder="Enter long URL" />
+      <button onclick="shortenUrl()">Shorten URL</button>
+      <div class="result" id="result">
+        <p>🎉 Yay! Copy your shortened URL below</p>
+        <input type="text" id="short-url" readonly />
+        <button onclick="copyUrl()">Copy</button>
+      </div>
+
+      <div class="auth-buttons">
+        <a id="sign-in-link" onclick="showModal('signIn')">Sign In</a>
+        <a id="sign-up-link" onclick="showModal('signUp')">Sign Up</a>
+        <a id="sign-out-link" onclick="signOut()" style="display: none;">Sign Out</a>
+      </div>
+    </div>
+
+    <!-- The Modal -->
+    <div id="auth-modal" class="modal">
+      <div class="modal-content">
+        <span class="close" onclick="hideModal()">&times;</span>
+        <div class="auth">
+          <input type="text" id="username" placeholder="Username" />
+          <input type="password" id="password" placeholder="Password" />
+          <button id="auth-button" onclick="handleAuth()">Submit</button>
+        </div>
+      </div>
+    </div>
+
+    <script>
+     const AWS_REGION = "{{awsRegion}}";
+      const COGNITO_USER_POOL_ID = "{{cognitoUserPoolId}}";
+      const CLIENT_ID = "{{cognitoClientId}}";
+      const SHORTEN_URL = "{{& shorten_url}}";
+
+      AWS.config.region = AWS_REGION;
+      AWS.config.credentials = new AWS.CognitoIdentityCredentials({
+        IdentityPoolId: 'your-identity-pool-id' // Replace with your Identity Pool ID
+      });
+
+      const poolData = {
+        UserPoolId: COGNITO_USER_POOL_ID,
+        ClientId: CLIENT_ID
+      };
+      const userPool = new AmazonCognitoIdentity.CognitoUserPool(poolData);
+
+      let currentAuthAction = '';
+
+      function showModal(action) {
+        currentAuthAction = action;
+        document.getElementById('auth-modal').style.display = 'block';
+        document.getElementById('auth-button').innerText = action === 'signIn' ? 'Sign In' : 'Sign Up';
+      }
+
+      function hideModal() {
+        document.getElementById('auth-modal').style.display = 'none';
+      }
+
+      function handleAuth() {
+        if (currentAuthAction === 'signIn') {
+          signIn();
+        } else if (currentAuthAction === 'signUp') {
+          signUp();
+        }
+      }
+
+      function signIn() {
+        const username = document.getElementById('username').value;
+        const password = document.getElementById('password').value;
+
+        const authenticationDetails = new AmazonCognitoIdentity.AuthenticationDetails({
+          Username: username,
+          Password: password,
+        });
+
+        const userData = {
+          Username: username,
+          Pool: userPool,
+        };
+
+        const cognitoUser = new AmazonCognitoIdentity.CognitoUser(userData);
+        cognitoUser.authenticateUser(authenticationDetails, {
+          onSuccess: function (result) {
+            console.log('Sign in success', result);
+            alert('Sign in success');
+            hideModal();
+            updateAuthLinks(true);
+          },
+          onFailure: function (err) {
+            console.error('Sign in failure', err);
+            alert('Sign in failure: ' + err.message);
+          },
+        });
+      }
+
+      function signUp() {
+        const username = document.getElementById('username').value;
+        const password = document.getElementById('password').value;
+
+        const attributeList = [];
+
+        userPool.signUp(username, password, attributeList, null, function (err, result) {
+          if (err) {
+            console.error('Sign up failure', err);
+            alert('Sign up failure: ' + err.message);
+            return;
+          }
+          console.log('Sign up success', result);
+          alert('Sign up success');
+          hideModal();
+        });
+      }
+
+      function signOut() {
+        const cognitoUser = userPool.getCurrentUser();
+        if (cognitoUser != null) {
+          cognitoUser.signOut();
+          alert('Sign out success');
+          updateAuthLinks(false);
+        }
+      }
+
+      function updateAuthLinks(isSignedIn) {
+        document.getElementById('sign-in-link').style.display = isSignedIn ? 'none' : 'inline';
+        document.getElementById('sign-up-link').style.display = isSignedIn ? 'none' : 'inline';
+        document.getElementById('sign-out-link').style.display = isSignedIn ? 'inline' : 'none';
+      }
+
+      function validateShortUrl(long_url){
+        return long_url.startsWith("http://") || long_url.startsWith("www.") || long_url.startsWith("https://") ? long_url : alert("Invalid url: Url must be start with 'www / http / https'");
+      }
+
+      async function shortenUrl() {
+        const long_url = document.getElementById("long-url").value.toLowerCase();
+
+        validateShortUrl(long_url);
+
+        const xhr = new XMLHttpRequest();
+        xhr.open("POST", SHORTEN_URL);
+        xhr.responseType = "json";
+        xhr.setRequestHeader("Content-Type", "application/json; charset=utf-8");
+        xhr.send(JSON.stringify({ long_url }));
+
+        xhr.onload = function () {
+          if (xhr.status === 200) {
+            const data = xhr.response.url;
+            document.getElementById("short-url").value = data;
+            document.getElementById("result").style.display = "block";
+          } else {
             alert("Failed to shorten URL. Please try again.");
           }
         };
@@ -303,79 +682,20 @@
         alert("Shortened URL copied to clipboard");
       }
 
-      $(document).ready(function() {
-        regDialog = $("#reg-dialog-form").dialog({
-          autoOpen: false,
-          modal: true,
-          buttons: {
-            "Create an account": addUser,
-            Cancel: function() {
-              regDialog.dialog("close");
+      document.addEventListener("DOMContentLoaded", function () {
+        const cognitoUser = userPool.getCurrentUser();
+        if (cognitoUser != null) {
+          cognitoUser.getSession(function (err, session) {
+            if (err) {
+              console.error(err);
+              return;
             }
-          },
-          close: function() {
-            regForm[0].reset();
-          }
-        });
-
-        regForm = regDialog.find("form").on("submit", function(event) {
-          event.preventDefault();
-          addUser();
-        });
-
-        $("#register").on("click", function() {
-          regDialog.dialog("open");
-        });
-
-        verifyDialog = $("#verify-dialog-form").dialog({
-          autoOpen: false,
-          modal: true,
-          buttons: {
-            "Confirm registration": confirmUser,
-            Cancel: function() {
-              verifyDialog.dialog("close");
-            }
-          },
-          close: function() {
-            $(this).dialog("close");
-          }
-        });
-
-        regCompleteDialog = $("#registered-message").dialog({
-          autoOpen: false,
-          modal: true,
-          buttons: {
-            Ok: function() {
-              $(this).dialog("close");
-            }
-          }
-        });
-
-        signInDialog = $("#sign-in-form").dialog({
-          autoOpen: false,
-          modal: true,
-          buttons: {
-            "Sign in": authenticateUser,
-            Cancel: function() {
-              signInDialog.dialog("close");
-            }
-          },
-          close: function() {
-            $(this).dialog("close");
-          }
-        });
-
-        $("#sign-in").on("click", function() {
-          signInDialog.dialog("open");
-        });
-
-        $("#sign-out").on("click", function() {
-          signOut();
-        })
-
-        init();
+            updateAuthLinks(true);
+          });
+        } else {
+          updateAuthLinks(false);
+        }
       });
-
     </script>
   </body>
 </html>
