@@ -31,10 +31,8 @@ class CognitoStack extends Stack {
 
     const webUserPoolClient = new UserPoolClient(this, "WebUserPoolClient", {
       userPool,
-      generateSecret: false,
       preventUserExistenceErrors: true,
       authFlows: {
-        userPassword: true,
         userSrp: true,
       },
     });
