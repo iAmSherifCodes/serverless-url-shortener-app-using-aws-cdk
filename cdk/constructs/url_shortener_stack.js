@@ -70,29 +70,28 @@ class UrlShortenerStack extends Stack {
       code: Code.fromAsset("functions"),
       environment: {
         table_name,
-        base_url: Fn.sub(
-          `https://\${${apiLogicalId}}.execute-api.\${AWS::Region}.amazonaws.com/${props.stageName}/redirect?short_url=`
-        )
+        base_url: `https://ah2cfl7w5csovqcosjsuk4m2ya0pwbfk.lambda-url.us-east-1.on.aws/?short_url=`
+
       },
     });
 
     table.grantWriteData(shortenUrl);
 
-    const redirectFunction = new Function(this, "RedirectUrl", {
-      runtime: Runtime.NODEJS_18_X,
-      handler: "redirect.handler",
-      code: Code.fromAsset("functions"),
-      environment: {
-        table_name,
-      },
-    });
-
-    table.grantReadData(redirectFunction);
+    // const redirectFunction = new Function(this, "RedirectUrl", {
+    //   runtime: Runtime.NODEJS_18_X,
+    //   handler: "redirect.handler",
+    //   code: Code.fromAsset("functions"),
+    //   environment: {
+    //     table_name,
+    //   },
+    // });
+    //
+    // table.grantReadData(redirectFunction);
 
     const shortenUrlLambdaIntegration = new LambdaIntegration(shortenUrl);
-    const redirectFunctionLambdaIntegration = new LambdaIntegration(
-      redirectFunction
-    );
+    // const redirectFunctionLambdaIntegration = new LambdaIntegration(
+    //   redirectFunction
+    // );
     const indexFuntionLambdaIntegration = new LambdaIntegration(indexFuntion);
 
     api.root.addMethod("GET", indexFuntionLambdaIntegration);
@@ -149,18 +148,18 @@ class UrlShortenerStack extends Stack {
       },
     );
 
-    api.root
-      .addResource("redirect")
-      .addMethod("GET", redirectFunctionLambdaIntegration, {
-        requestParameters: {
-          "method.request.querystring.short_url": true,
-        },
-        requestValidatorOptions: {
-          requestValidatorName: "querystring-validator",
-          validateRequestParameters: true,
-          validateRequestBody: false,
-        },
-      });
+    // api.root
+    //   .addResource("redirect")
+    //   .addMethod("GET", redirectFunctionLambdaIntegration, {
+    //     requestParameters: {
+    //       "method.request.querystring.short_url": true,
+    //     },
+    //     requestValidatorOptions: {
+    //       requestValidatorName: "querystring-validator",
+    //       validateRequestParameters: true,
+    //       validateRequestBody: false,
+    //     },
+    //   });
 }
 }
 

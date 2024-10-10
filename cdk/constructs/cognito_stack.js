@@ -14,7 +14,6 @@ class CognitoStack extends Stack {
     const userPool = new UserPool(this, "UserPool", {
       selfSignUpEnabled: true,
       signInAliases: {
-        username: true,
         email: true,
       },
       signInCaseSensitive: false,
@@ -32,10 +31,8 @@ class CognitoStack extends Stack {
 
     const webUserPoolClient = new UserPoolClient(this, "WebUserPoolClient", {
       userPool,
-      generateSecret: false,
       preventUserExistenceErrors: true,
       authFlows: {
-        userPassword: true,
         userSrp: true,
       },
     });
