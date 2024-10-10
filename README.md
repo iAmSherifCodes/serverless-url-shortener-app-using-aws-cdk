@@ -1,10 +1,27 @@
 # Serverless Url Shortener Application built with AWS CDK
 
-The `cdk.json` file tells the CDK Toolkit how to execute your app. The build step is not required when using JavaScript.
+This is a Serverless application that intends to shorten your long url.
 
-## Useful commands
+## Tools/Services
+- AWS CDK
+- AWS Lambda
+- Amazon API Gateway
+- Amazon Cognito
+- Amazon DynamoDB
+- AWS Serverless Application Model (SAM)
 
-* `npm run test`         perform the jest unit tests
-* `npx cdk deploy`       deploy this stack to your default AWS account/region
-* `npx cdk diff`         compare deployed stack with current state
-* `npx cdk synth`        emits the synthesized CloudFormation template
+---------------------------------------------------------------------------
+
+## TEST
+
+This application is live and can be accessed using the embedded url below:
+
+[URL](https://b1a6uc09cc.execute-api.us-east-1.amazonaws.com/prod/)
+
+________________________________________________________________
+For Comments or Observations, Please reach out:
+
+[LinkedIn----](https://linkedin.com/in/sherifawofiranye)
+
+----
+Thank You.
