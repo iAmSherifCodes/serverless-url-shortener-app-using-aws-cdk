@@ -77,21 +77,7 @@ class UrlShortenerStack extends Stack {
 
     table.grantWriteData(shortenUrl);
 
-    // const redirectFunction = new Function(this, "RedirectUrl", {
-    //   runtime: Runtime.NODEJS_18_X,
-    //   handler: "redirect.handler",
-    //   code: Code.fromAsset("functions"),
-    //   environment: {
-    //     table_name,
-    //   },
-    // });
-    //
-    // table.grantReadData(redirectFunction);
-
     const shortenUrlLambdaIntegration = new LambdaIntegration(shortenUrl);
-    // const redirectFunctionLambdaIntegration = new LambdaIntegration(
-    //   redirectFunction
-    // );
     const indexFuntionLambdaIntegration = new LambdaIntegration(indexFuntion);
 
     api.root.addMethod("GET", indexFuntionLambdaIntegration);
@@ -148,18 +134,6 @@ class UrlShortenerStack extends Stack {
       },
     );
 
-    // api.root
-    //   .addResource("redirect")
-    //   .addMethod("GET", redirectFunctionLambdaIntegration, {
-    //     requestParameters: {
-    //       "method.request.querystring.short_url": true,
-    //     },
-    //     requestValidatorOptions: {
-    //       requestValidatorName: "querystring-validator",
-    //       validateRequestParameters: true,
-    //       validateRequestBody: false,
-    //     },
-    //   });
 }
 }
 
