@@ -101,7 +101,7 @@
   </head>
   <body>
     <div class="container">
-      <h2>✨ URL Shortener ✨</h2>
+      <h3>✨ URL Shortener ✨</h3>
       <input type="text" id="long-url" placeholder="Enter long URL" />
       <button onclick="shortenUrl()">Shorten URL</button>
       <div class="result" id="result">
@@ -304,7 +304,10 @@
         xhr.send(JSON.stringify({ long_url }));
 
         xhr.onload = function () {
-          if (xhr.status === 200) {
+          if(idToken === null){
+            alert("Please Sign Up")
+          }
+          else if (xhr.status === 200) {
             const data = xhr.response.url;
             document.getElementById("short-url").value = data;
             document.getElementById("result").style.display = "block";
